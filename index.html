@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plunder, A Pirate's Life</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom font for a clean look, with a pirate-themed header font */
+        body {
+            font-family: "Inter", sans-serif;
+            background: linear-gradient(to bottom right, #1a2a3a, #0a1a2a); /* Deep ocean gradient */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Full viewport height */
+            margin: 0;
+            padding: 1rem; /* Padding around the content */
+            box-sizing: border-box; /* Include padding in element's total width and height */
+        }
+        .container {
+            background-color: #d4b88c; /* Aged parchment/wood color */
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4); /* Deeper shadow for depth */
+            padding: 1.5rem; /* Adjusted padding for mobile */
+            text-align: center;
+            max-width: 90%; /* Max width for responsiveness */
+            width: 550px; /* Fixed width for larger screens */
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem; /* Space between elements */
+            border: 5px solid #8b4513; /* Dark wood border */
+            position: relative; /* For potential future decorative elements */
+        }
+        @media (min-width: 640px) { /* Medium screens and up */
+            .container {
+                padding: 2.5rem; /* Restore larger padding for desktop */
+            }
+        }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -5px; left: -5px; right: -5px; bottom: -5px;
+            border: 5px dashed rgba(139, 69, 19, 0.5); /* Dashed inner border for map feel */
+            border-radius: 1.5rem;
+            pointer-events: none; /* Allow clicks to pass through */
+        }
+
+        h1 {
+            font-family: 'Pirata One', cursive; /* Pirate-themed font for the main title */
+            font-size: 2.8rem; /* Smaller for mobile */
+            color: #4e342e; /* Dark brown for title */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Text shadow for depth */
+            margin-bottom: 1.5rem;
+            line-height: 1.1; /* Adjust line height for multi-line title */
+        }
+        @media (min-width: 640px) { /* Medium screens and up */
+            h1 {
+                font-size: 3.5rem; /* Restore larger font for desktop */
+            }
+        }
+
+        .display-section {
+            background-color: #fdf6e3; /* Lighter parchment for display boxes */
+            border-radius: 0.75rem; /* Rounded corners for display */
+            padding: 1.25rem; /* Generous padding */
+            font-weight: 700; /* Bold font */
+            color: #333333; /* Dark text color */
+            min-height: 4rem; /* Ensure consistent height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap; /* Allow content to wrap on small screens */
+            gap: 1rem; /* Space between items if they wraps */
+            flex-direction: column; /* Stack title and content */
+            border: 2px solid #8b4513; /* Matching border */
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1); /* Inner shadow for depth */
+        }
+        .display-title {
+            font-size: 1.5rem; /* Slightly larger title for sections */
+            color: #5a403a; /* Darker brown */
+            margin-bottom: 0.5rem;
+            font-family: 'Pirata One', cursive; /* Apply pirate font to section titles too */
+        }
+
+        /* Compass specific styles */
+        .compass-display-content {
+            display: flex;
+            gap: 1rem; /* Reduced gap for mobile */
+            justify-content: center;
+            align-items: center;
+            width: 100%; /* Ensure it takes full width */
+        }
+        @media (min-width: 640px) { /* Medium screens and up */
+            .compass-display-content {
+                gap: 2rem; /* Restore larger gap for desktop */
+            }
+        }
+        .compass-container {
+            width: 120px; /* Fixed size for the compass */
+            height: 120px;
+            border-radius: 50%;
+            background-color: #5a403a; /* Dark wood/brass color */
+            border: 5px solid #b8860b; /* Gold rim */
+            overflow: hidden; /* Hide parts of the spinning dial */
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.2); /* Outer shadow + inner glass effect */
+        }
+        .compass-container::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5); /* Inner shadow for depth */
+            pointer-events: none;
+        }
+        .compass-container::after { /* Compass Needle/Indicator */
+            content: '';
+            position: absolute;
+            top: 0; /* Position at the top edge */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 15px solid #ff4500; /* Red triangle for needle */
+            z-index: 10; /* Ensure it's above the dial */
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5)); /* Shadow for needle */
+        }
+
+        .compass-dial {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3.5rem; /* Large font for the value */
+            color: #ffd700; /* Gold color for the value */
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            transition: transform 0.5s ease-out; /* Smooth transition for final snap */
+            user-select: none; /* Prevent text selection during spin */
+        }
+
+        /* Animation for spinning compass */
+        @keyframes spinCompass {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(3600deg); /* Spin multiple times */ }
+        }
+        .compass-dial.spinning {
+            animation: spinCompass 1.5s linear infinite; /* Continuous spin during animation, faster */
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column; /* Stack buttons on small screens */
+            gap: 1rem; /* Space between buttons */
+        }
+        @media (min-width: 640px) { /* On small screens and up, make buttons a row */
+            .button-group {
+                flex-direction: row;
+            }
+        }
+
+        .generate-button {
+            flex: 1; /* Allow buttons to grow and take equal space */
+            background-image: linear-gradient(to right, #4e342e, #6d4c41); /* Dark wood gradient */
+            color: #ffd700; /* Gold text */
+            padding: 1.2rem 2.5rem; /* More comfortable padding */
+            border-radius: 1rem; /* Rounded button */
+            font-size: 1.35rem; /* Larger font */
+            font-weight: 600; /* Semi-bold */
+            cursor: pointer;
+            border: 3px solid #b8860b; /* Gold border */
+            transition: all 0.3s ease; /* Smooth transition for hover effects */
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3); /* Deeper shadow */
+            white-space: nowrap; /* Prevent button text from wrapping */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Text shadow for gold effect */
+        }
+        .generate-button:hover {
+            transform: translateY(-4px); /* Lift effect on hover */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); /* Enhanced shadow */
+            background-image: linear-gradient(to right, #6d4c41, #8d6e63); /* Lighter wood on hover */
+        }
+        .generate-button:active {
+            transform: translateY(0); /* Press effect */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Styles for the new selectors */
+        .selector-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .selector-group label {
+            font-family: 'Pirata One', cursive;
+            font-size: 1.4rem;
+            color: #5a403a;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            text-align: center; /* Center label text */
+        }
+        .selector-row {
+            display: flex;
+            flex-direction: column; /* Stack on mobile */
+            gap: 1rem;
+            width: 100%; /* Take full width */
+            justify-content: center;
+        }
+        @media (min-width: 640px) {
+            .selector-row {
+                flex-direction: row; /* Row on desktop */
+                gap: 2rem;
+            }
+        }
+        .selector-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1; /* Distribute space evenly */
+        }
+        .selector-group select {
+            background-color: #fdf6e3;
+            border: 2px solid #8b4513;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-size: 1.1rem;
+            color: #333333;
+            cursor: pointer;
+            outline: none;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+            appearance: none; /* Remove default dropdown arrow */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238b4513'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); /* Custom arrow */
+            background-repeat: no-repeat;
+            background-position: right 0.7rem center;
+            background-size: 1.5em;
+            padding-right: 2.5rem; /* Make space for custom arrow */
+            width: 100%; /* Ensure select fills its container */
+            max-width: 150px; /* Limit width */
+        }
+
+        /* Styles for checkboxes */
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+        @media (min-width: 640px) {
+            .checkbox-group {
+                flex-direction: row;
+                justify-content: center;
+                gap: 2rem;
+            }
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .checkbox-item input[type="checkbox"] {
+            width: 1.25rem;
+            height: 1.25rem;
+            accent-color: #8b4513; /* Pirate-themed accent color */
+            cursor: pointer;
+        }
+        .checkbox-item label {
+            font-family: "Inter", sans-serif; /* Keep Inter for readability */
+            font-size: 1.1rem;
+            color: #5a403a;
+            user-select: none; /* Prevent text selection */
+            cursor: pointer;
+        }
+
+        /* Styles for reintroduced sections (initially hidden) */
+        .resource-item { /* Re-added resource item style */
+            padding: 0.75rem 1.5rem;
+            background-color: #8b4513;
+            color: #ffd700;
+            border-radius: 0.75rem;
+            white-space: nowrap;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+            border: 2px solid #a0522d;
+        }
+        .dice-container { /* Re-added dice container style */
+            display: flex;
+            gap: 1rem;
+            font-size: 3.5rem;
+            line-height: 1;
+        }
+        .dice-face { /* Re-added dice face style */
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            text-align: center;
+            line-height: 1em;
+        }
+        .attack-message { /* Re-added attack message style */
+            font-size: 1.5rem;
+            color: #4e342e;
+            margin-top: 0.5rem;
+            font-weight: normal;
+        }
+        /* Specific styling for the resource button */
+        #drawResourceButton {
+            background-image: linear-gradient(to right, #10b981, #34d399); /* Greenish gradient */
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+        #drawResourceButton:hover {
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.6);
+            background-image: linear-gradient(to right, #34d399, #6ee7b7);
+        }
+        #drawResourceButton:active {
+            box-shadow: 0 3px 10px rgba(16, 185, 129, 0.3);
+        }
+        /* Specific styling for the attack button */
+        #attackButton {
+            background-image: linear-gradient(to right, #8b0000, #b22222); /* Dark red for attack */
+            border-color: #ff4500; /* Orange-red border */
+            box-shadow: 0 5px 15px rgba(139, 0, 0, 0.4);
+        }
+        #attackButton:hover {
+            box-shadow: 0 8px 20px rgba(139, 0, 0, 0.6);
+            background-image: linear-gradient(to right, #b22222, #cd5c5c);
+        }
+        #attackButton:active {
+            box-shadow: 0 3px 10px rgba(139, 0, 0, 0.3);
+        }
+
+        /* New styles for battle bonus selectors */
+        .battle-bonus-selectors {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            width: 100%;
+            align-items: center;
+        }
+        @media (min-width: 640px) {
+            .battle-bonus-selectors {
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+        .battle-bonus-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .battle-bonus-item label {
+            font-family: 'Pirata One', cursive;
+            font-size: 1.2rem;
+            color: #5a403a;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        .battle-bonus-item select {
+            background-color: #fdf6e3;
+            border: 2px solid #8b4513;
+            border-radius: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            font-size: 1rem;
+            color: #333333;
+            cursor: pointer;
+            outline: none;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238b4513'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1.2em;
+            padding-right: 2rem;
+            min-width: 80px; /* Ensure enough width for options */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Plunder, A Pirate's Life</h1>
+
+        <!-- Feature Checkboxes -->
+        <div class="checkbox-group">
+            <div class="checkbox-item">
+                <input type="checkbox" id="resourceCheckbox">
+                <label for="resourceCheckbox">Bring back the booty draw!</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="battleCheckbox">
+                <label for="battleCheckbox">Ready for a skirmish!</label>
+            </div>
+        </div>
+
+        <!-- Tile Count Selectors -->
+        <div class="selector-group">
+            <div class="selector-row">
+                <div class="selector-item">
+                    <label for="alphabetTilesSelector">Alphabet Tiles (Depth):</label>
+                    <select id="alphabetTilesSelector">
+                        <!-- Options will be generated by JS -->
+                    </select>
+                </div>
+                <div class="selector-item">
+                    <label for="numberTilesSelector">Number Tiles (Length):</label>
+                    <select id="numberTilesSelector">
+                        <!-- Options will be generated by JS -->
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spin Dial Coordinates Section -->
+        <div class="display-section">
+            <div class="display-title">Cast your luck to the seas!</div>
+            <div id="coordinateDisplay" class="compass-display-content">
+                <div class="compass-container">
+                    <div id="letterDial" class="compass-dial">A</div>
+                </div>
+                <div class="compass-container">
+                    <div id="numberDial" class="compass-dial">1</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resource Card Section (Initially Hidden) -->
+        <div id="resourceSection" class="display-section hidden">
+            <div class="display-title">Resource Card</div>
+            <div id="resourceDisplay" class="compass-display-content">
+                Draw your bounty!
+            </div>
+        </div>
+
+        <!-- Attack Roll Section (Initially Hidden) -->
+        <div id="attackSection" class="display-section hidden">
+            <div class="display-title">Battle Roll</div>
+            <!-- Bonus Selectors for Battle Roll -->
+            <div class="battle-bonus-selectors">
+                <div class="battle-bonus-item">
+                    <label for="attackBonusSelector">Attack Bonus:</label>
+                    <select id="attackBonusSelector">
+                        <option value="0">+0</option>
+                        <option value="1">+1</option>
+                        <option value="2">+2</option>
+                    </select>
+                </div>
+                <div class="battle-bonus-item">
+                    <label for="defenseBonusSelector">Defense Bonus:</label>
+                    <select id="defenseBonusSelector">
+                        <option value="0">+0</option>
+                        <option value="1">+1</option>
+                        <option value="2">+2</option>
+                        <option value="3">+3</option>
+                    </select>
+                </div>
+            </div>
+            <div id="attackDisplay" class="compass-display-content">
+                Prepare to board!
+            </div>
+        </div>
+
+        <!-- Buttons Group -->
+        <div class="button-group">
+            <button id="spinDialButton" class="generate-button">Spin Dial</button>
+            <!-- Resource Button (Initially Hidden) -->
+            <button id="drawResourceButton" class="generate-button hidden">Draw Resource Card</button>
+            <!-- Attack Button (Initially Hidden) -->
+            <button id="attackButton" class="generate-button hidden">Attack!</button>
+        </div>
+
+        <!-- Hidden Audio Element for Wilhelm Scream -->
+        <audio id="wilhelmScreamAudio" src="wilhelm_scream.mp3" preload="auto"></audio>
+    </div>
+
+    <script>
+        // Get references to HTML elements
+        const alphabetTilesSelector = document.getElementById('alphabetTilesSelector');
+        const numberTilesSelector = document.getElementById('numberTilesSelector');
+        const spinDialButton = document.getElementById('spinDialButton');
+        const letterDial = document.getElementById('letterDial');
+        const numberDial = document.getElementById('numberDial');
+
+        // Feature checkboxes and their associated sections/buttons
+        const resourceCheckbox = document.getElementById('resourceCheckbox');
+        const battleCheckbox = document.getElementById('battleCheckbox');
+        const resourceSection = document.getElementById('resourceSection');
+        const resourceDisplay = document.getElementById('resourceDisplay');
+        const drawResourceButton = document.getElementById('drawResourceButton');
+        const attackSection = document.getElementById('attackSection');
+        const attackDisplay = document.getElementById('attackDisplay');
+        const attackButton = document.getElementById('attackButton');
+
+        // Bonus selectors for battle roll
+        const attackBonusSelector = document.getElementById('attackBonusSelector');
+        const defenseBonusSelector = document.getElementById('defenseBonusSelector');
+
+        // New: Audio element for Wilhelm Scream
+        const wilhelmScreamAudio = document.getElementById('wilhelmScreamAudio');
+
+
+        // Function to generate the full alphabet sequence (A, B, ..., Z, AA, AB, ...)
+        function generateFullAlphabetSequence(count) {
+            const alphabet = [];
+            let current = 0;
+            while (alphabet.length < count) {
+                let letter = '';
+                let num = current;
+                do {
+                    letter = String.fromCharCode(65 + (num % 26)) + letter;
+                    num = Math.floor(num / 26) - 1; // Adjust for 0-indexed vs 1-indexed for base 26
+                } while (num >= 0);
+                alphabet.push(letter);
+                current++;
+            }
+            return alphabet;
+        }
+
+        // Pre-generate the maximum possible alphabet needed (e.g., for 10 alphabet tiles * 6 letters/tile = 60 letters)
+        const fullAlphabet = generateFullAlphabetSequence(60);
+
+        // Variables to store current max letters and numbers based on selector
+        let currentMaxLetters = 0;
+        let currentMaxNumbers = 0;
+
+        let letterSpinInterval; // Variable for letter compass animation
+        let numberSpinInterval; // Variable for number compass animation
+        let rollingInterval; // Variable to hold the interval ID for dice animation
+
+        // Define the possible resource cards
+        const resources = ['Wood', 'Rum', 'Iron', 'Gold'];
+        // Define dice emojis for each face
+        const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅']; // Emojis for 1 to 6
+
+        /**
+         * Populates the dropdown selectors with options.
+         */
+        function populateSelectors() {
+            // Populate Alphabet Tiles selector (e.g., 1 to 10 tiles)
+            for (let i = 1; i <= 10; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `${i} Tile${i > 1 ? 's' : ''}`;
+                alphabetTilesSelector.appendChild(option);
+            }
+            // Populate Number Tiles selector (e.g., 1 to 12 tiles)
+            for (let i = 1; i <= 12; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `${i} Tile${i > 1 ? 's' : ''}`;
+                numberTilesSelector.appendChild(option);
+            }
+
+            // Set initial default values to match a 1-game board (A-L, 1-18)
+            // A-L is 12 letters, which is 2 tiles (2 * 6 = 12)
+            // 1-18 is 18 numbers, which is 3 tiles (3 * 6 = 18)
+            alphabetTilesSelector.value = '2';
+            numberTilesSelector.value = '3';
+        }
+
+        /**
+         * Updates the current max letters and numbers based on the selected tile counts.
+         */
+        function updateGridRanges() {
+            const alphabetTiles = parseInt(alphabetTilesSelector.value);
+            const numberTiles = parseInt(numberTilesSelector.value);
+            currentMaxLetters = alphabetTiles * 6;
+            currentMaxNumbers = numberTiles * 6;
+        }
+
+        /**
+         * Generates a single random grid coordinate (e.g., "A-1", "M-18")
+         * based on the current `currentMaxLetters` and `currentMaxNumbers`.
+         * @returns {string} A random grid coordinate.
+         */
+        function generateRandomCoordinate() {
+            const availableLetters = fullAlphabet.slice(0, currentMaxLetters);
+            const randomLetterIndex = Math.floor(Math.random() * availableLetters.length);
+            const randomLetter = availableLetters[randomLetterIndex];
+            const randomNumber = Math.floor(Math.random() * currentMaxNumbers) + 1;
+            return `${randomLetter}-${randomNumber}`;
+        }
+
+        /**
+         * Event handler for the "Spin Dial" button click.
+         * Initiates a spinning animation for two compasses, then displays the final single coordinate.
+         */
+        function handleSpinDialClick() {
+            // Disable the button during the animation
+            spinDialButton.disabled = true;
+            spinDialButton.textContent = 'Spinning...';
+
+            // Add spinning class to both dials to trigger CSS animation
+            letterDial.classList.add('spinning');
+            numberDial.classList.add('spinning');
+
+            // Start rapid random display for letter dial (faster)
+            letterSpinInterval = setInterval(() => {
+                const availableLetters = fullAlphabet.slice(0, currentMaxLetters);
+                letterDial.textContent = availableLetters[Math.floor(Math.random() * availableLetters.length)];
+            }, 30); // Updated to 30ms for faster spin
+
+            // Start rapid random display for number dial (faster)
+            numberSpinInterval = setInterval(() => {
+                numberDial.textContent = Math.floor(Math.random() * currentMaxNumbers) + 1;
+            }, 30); // Updated to 30ms for faster spin
+
+            // Determine the final coordinate
+            const finalCoord = generateRandomCoordinate();
+            const [finalLetter, finalNumber] = finalCoord.split('-');
+
+            // Stop spinning and display final results after a delay
+            setTimeout(() => {
+                clearInterval(letterSpinInterval); // Stop letter animation
+                clearInterval(numberSpinInterval); // Stop number animation
+
+                letterDial.classList.remove('spinning'); // Remove animation class
+                numberDial.classList.remove('spinning'); // Remove animation class
+
+                // Set final values
+                letterDial.textContent = finalLetter;
+                numberDial.textContent = finalNumber;
+
+                // Re-enable the button
+                spinDialButton.disabled = false;
+                spinDialButton.textContent = 'Spin Dial';
+            }, 2000); // Spin for 2 seconds (adjusted slightly for faster spin)
+        }
+
+        /**
+         * Event handler for the "Draw Resource Card" button click.
+         * Randomly selects a resource and updates the display.
+         */
+        function handleDrawResourceClick() {
+            // Select a random resource from the 'resources' array
+            const randomResource = resources[Math.floor(Math.random() * resources.length)];
+
+            // Update the display with the new resource
+            resourceDisplay.innerHTML = `
+                <span class="resource-item">${randomResource}</span>
+            `;
+        }
+
+        /**
+         * Rolls a single six-sided die.
+         * @returns {number} A random integer between 1 and 6.
+         */
+        function rollDie() {
+            return Math.floor(Math.random() * 6) + 1;
+        }
+
+        /**
+         * Event handler for the "Attack!" button click.
+         * Initiates dice rolling animation, then displays results and a pirate-themed message.
+         */
+        function handleAttackClick() {
+            // Play Wilhelm Scream at the start of the battle roll
+            if (wilhelmScreamAudio) {
+                wilhelmScreamAudio.currentTime = 0; // Rewind to start if already played
+                wilhelmScreamAudio.play().catch(e => console.error("Error playing Wilhelm Scream:", e));
+            }
+
+            // Disable the button during the animation
+            attackButton.disabled = true;
+            attackButton.textContent = 'Rolling...';
+
+            // Get selected bonuses
+            const attackBonus = parseInt(attackBonusSelector.value);
+            const defenseBonus = parseInt(defenseBonusSelector.value);
+
+            // Clear previous message and set up initial dice emojis
+            attackDisplay.innerHTML = `
+                <div class="dice-container">
+                    <span id="attackDie" class="dice-face">🎲</span>
+                    <span id="defenseDie" class="dice-face">🎲</span>
+                </div>
+                <span class="attack-message"></span>
+            `;
+
+            const attackDieElement = attackDisplay.querySelector('#attackDie'); // Ensure we get elements within current display
+            const defenseDieElement = attackDisplay.querySelector('#defenseDie');
+
+            // Start rolling animation
+            rollingInterval = setInterval(() => {
+                attackDieElement.textContent = diceFaces[Math.floor(Math.random() * 6)];
+                defenseDieElement.textContent = diceFaces[Math.floor(Math.random() * 6)];
+            }, 100); // Change dice face every 100ms
+
+            // Stop rolling and display final results after a delay
+            setTimeout(() => {
+                clearInterval(rollingInterval); // Stop the animation
+
+                let attackRoll = rollDie();
+                let defenseRoll = rollDie();
+
+                // Apply bonuses
+                attackRoll += attackBonus;
+                defenseRoll += defenseBonus;
+
+                // Display dice faces based on original roll (before bonus), but message uses final value
+                // Or, display the final modified value directly if we want to simplify
+                // For now, let's just display the final value for simplicity on the dice emoji.
+                // We'll use the actual roll + bonus for comparison.
+                // To show the *effect* of the bonus, we'll display the final number.
+                // Since emoji only go up to 6, we'll show the number itself if it exceeds 6.
+                attackDieElement.textContent = attackRoll <= 6 ? diceFaces[attackRoll - 1] : attackRoll;
+                defenseDieElement.textContent = defenseRoll <= 6 ? diceFaces[defenseRoll - 1] : defenseRoll;
+
+
+                let message = '';
+                let winner = '';
+
+                if (attackRoll >= defenseRoll) { // Attacker wins ties
+                    winner = 'Attacker';
+                    message = `Ye struck true, matey! The ${winner} prevails with ${attackRoll} vs ${defenseRoll}!`;
+                } else {
+                    winner = 'Defender';
+                    message = `Blast! The ${winner} held their ground with ${defenseRoll} vs ${attackRoll}!`;
+                }
+
+                attackDisplay.querySelector('.attack-message').textContent = message;
+
+                // Re-enable the button
+                attackButton.disabled = false;
+                attackButton.textContent = 'Attack!';
+            }, 1500); // Roll for 1.5 seconds
+        }
+
+        /**
+         * Toggles the visibility of the resource draw feature.
+         */
+        function toggleResourceFeature() {
+            if (resourceCheckbox.checked) {
+                resourceSection.classList.remove('hidden');
+                drawResourceButton.classList.remove('hidden');
+            } else {
+                resourceSection.classList.add('hidden');
+                drawResourceButton.classList.add('hidden');
+            }
+        }
+
+        /**
+         * Toggles the visibility of the battle roll feature.
+         */
+        function toggleBattleFeature() {
+            if (battleCheckbox.checked) {
+                attackSection.classList.remove('hidden');
+                attackButton.classList.remove('hidden');
+            } else {
+                attackSection.classList.add('hidden');
+                attackButton.classList.add('hidden');
+            }
+        }
+
+        // Add event listeners
+        spinDialButton.addEventListener('click', handleSpinDialClick);
+        alphabetTilesSelector.addEventListener('change', updateGridRanges);
+        numberTilesSelector.addEventListener('change', updateGridRanges);
+
+        // Event listeners for the new checkboxes
+        resourceCheckbox.addEventListener('change', toggleResourceFeature);
+        battleCheckbox.addEventListener('change', toggleBattleFeature);
+
+        // Event listeners for the dynamically added buttons (only if visible)
+        drawResourceButton.addEventListener('click', handleDrawResourceClick);
+        attackButton.addEventListener('click', handleAttackClick);
+
+        // Initial setup when the page loads
+        window.onload = function() {
+            populateSelectors(); // Fill dropdowns with options
+            updateGridRanges(); // Set initial ranges based on default selector values
+            letterDial.textContent = 'A'; // Set initial values for compasses
+            numberDial.textContent = '1';
+
+            // Ensure features are hidden on load
+            toggleResourceFeature();
+            toggleBattleFeature();
+        };
+    </script>
+</body>
+</html>
