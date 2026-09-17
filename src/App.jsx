@@ -6,7 +6,7 @@ import ResourceDeck from './components/ResourceDeck';
 import SkirmishRoller from './components/SkirmishRoller';
 import FleetTracker from './components/FleetTracker';
 import BoardSettingsModal from './components/BoardSettingsModal';
-import parchmentBg from './assets/parchment_bg.jpg';
+import seaMapBg from './assets/sea_map_bg.jpg';
 import { APP_VERSION } from './utils/appVersion';
 
 import TitlePage from './components/TitlePage';
@@ -49,10 +49,10 @@ export default function App() {
   return (
     <GameProvider>
       <div className="relative min-h-screen flex flex-col overflow-x-hidden text-amber-950">
-        {/* Deep Ocean & Nautical Parchment Backdrop */}
+        {/* Deep Ocean & Sea Territory Map Backdrop */}
         <div
           className="fixed inset-0 bg-cover bg-center opacity-25 pointer-events-none mix-blend-overlay"
-          style={{ backgroundImage: `url(${parchmentBg})` }}
+          style={{ backgroundImage: `url(${seaMapBg})` }}
         />
 
         <div className="relative z-10 flex flex-col min-h-screen p-3 sm:p-6 max-w-5xl mx-auto w-full">
