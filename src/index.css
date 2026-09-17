@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Inter', sans-serif;
+    background: radial-gradient(circle at center, #132738 0%, #06101a 100%);
+    min-height: 100vh;
+    color: #3e2723;
+  }
+}
+
+/* 3D Card flip utilities */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* Aged Parchment Box Effect */
+.parchment-container {
+  background-color: #d4b88c;
+  background-image: radial-gradient(rgba(212, 184, 140, 0.95), rgba(184, 150, 100, 0.95));
+  border: 5px solid #6d4c41;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(78, 52, 46, 0.25);
+  position: relative;
+}
+
+.parchment-container::before {
+  content: '';
+  position: absolute;
+  top: -3px; left: -3px; right: -3px; bottom: -3px;
+  border: 2px dashed rgba(109, 76, 65, 0.6);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* Pirate Carved Button */
+.pirate-btn {
+  background-image: linear-gradient(to bottom, #5d4037, #3e2723);
+  color: #ffd700;
+  border: 2px solid #b8860b;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 215, 0, 0.3);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pirate-btn:hover:not(:disabled) {
+  background-image: linear-gradient(to bottom, #6d4c41, #4e342e);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5), 0 0 12px rgba(255, 215, 0, 0.35);
+}
+
+.pirate-btn:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.pirate-btn-gold {
+  background-image: linear-gradient(to bottom, #d4af37, #aa8010);
+  color: #1a0f00;
+  border: 2px solid #ffec8b;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+.pirate-btn-gold:hover:not(:disabled) {
+  background-image: linear-gradient(to bottom, #f1c40f, #c69500);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(241, 196, 15, 0.4);
+}
+
+.pirate-btn-crimson {
+  background-image: linear-gradient(to bottom, #991b1b, #7f1d1d);
+  color: #ffd700;
+  border: 2px solid #ef4444;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.pirate-btn-crimson:hover:not(:disabled) {
+  background-image: linear-gradient(to bottom, #b91c1c, #991b1b);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(185, 28, 28, 0.5);
+}
+
+/* Animations */
+@keyframes spinDial {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(1800deg); }
+}
+
+.animate-spin-fast {
+  animation: spinDial 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Plunder, a Pirates Life",
+  "short_name": "Plunder",
+  "description": "Digital companion for the board game Plunder: A Pirate's Life",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0a1a2a",
+  "theme_color": "#b8860b",
+  "icons": [
+    {
+      "src": "assets/compass_rose.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
