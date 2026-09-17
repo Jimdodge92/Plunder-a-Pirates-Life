@@ -7,6 +7,7 @@ import SkirmishRoller from './components/SkirmishRoller';
 import FleetTracker from './components/FleetTracker';
 import BoardSettingsModal from './components/BoardSettingsModal';
 import parchmentBg from './assets/parchment_bg.jpg';
+import { APP_VERSION } from './utils/appVersion';
 
 import TitlePage from './components/TitlePage';
 import BoardSetupPage from './components/BoardSetupPage';
@@ -58,7 +59,7 @@ export default function App() {
           <AppBody />
 
           <footer className="w-full text-center text-xs text-amber-300/50 py-4 font-mono mt-auto">
-            Plunder: A Pirate's Life &bull; Created by Jim Dodge
+            Plunder: A Pirate's Life &bull; Created by Jim Dodge &bull; Revision {APP_VERSION}
           </footer>
         </div>
       </div>
