@@ -3,7 +3,7 @@ import { useGame } from '../context/GameContext';
 import { pickRandomCoordinate, calculateGridBounds } from '../utils/gridCoordinates';
 import { sounds } from '../utils/soundEffects';
 import CompassDial from './CompassDial';
-import { RotateCw, History, Check, Settings2, Compass } from 'lucide-react';
+import { RotateCw, History, Settings2, Compass, Flame } from 'lucide-react';
 
 export default function CoordinateDial() {
   const {
@@ -29,9 +29,9 @@ export default function CoordinateDial() {
   const [displayNumber, setDisplayNumber] = useState('1');
 
   const [isSpinning, setIsSpinning] = useState(false);
+  const [isFiring, setIsFiring] = useState(false);
   const [letterNeedleAngle, setLetterNeedleAngle] = useState(0);
   const [numberNeedleAngle, setNumberNeedleAngle] = useState(0);
-  const [copied, setCopied] = useState(false);
 
   const spinTimeoutRef = useRef(null);
 
@@ -40,8 +40,8 @@ export default function CoordinateDial() {
     const targetAngle = targetIndex * anglePerItem;
     const currentMod = ((prevAngle % 360) + 360) % 360;
     let diff = (targetAngle - currentMod + 360) % 360;
-    if (diff === 0) diff = 360; // Ensure at least 1 full revolution even if same target
-    const fullSpins = 5 * 360; // 5 full 360 spins
+    if (diff === 0) diff = 360;
+    const fullSpins = 5 * 360;
     return prevAngle + fullSpins + diff;
   };
 
@@ -49,7 +49,6 @@ export default function CoordinateDial() {
     if (isSpinning) return;
     setIsSpinning(true);
 
-    // Pick target coordinate
     const target = pickRandomCoordinate(alphabetTiles, numberTiles);
     const targetLetterIndex = letters.indexOf(target.letter);
     const targetNumberIndex = target.number - 1;
@@ -57,24 +56,13 @@ export default function CoordinateDial() {
     setSelectedLetterIndex(targetLetterIndex);
     setSelectedNumberIndex(targetNumberIndex);
 
-    // Calculate rotation angle for both compass needles
     const nextLetterAngle = calculateTargetNeedleAngle(letterNeedleAngle, targetLetterIndex, letters.length);
     const nextNumberAngle = calculateTargetNeedleAngle(numberNeedleAngle, targetNumberIndex, numberItems.length);
 
     setLetterNeedleAngle(nextLetterAngle);
     setNumberNeedleAngle(nextNumberAngle);
 
-    // Play ratchet clicks matching the slowing spin of the needles
-    const tickDelays = [40, 50, 65, 85, 110, 145, 190, 250, 330, 440, 580];
-    let accumulatedTime = 0;
-    tickDelays.forEach((delay) => {
-      accumulatedTime += delay;
-      setTimeout(() => {
-        sounds.playSpin();
-      }, accumulatedTime);
-    });
-
-    // Settle needle and display final coordinate
+    // Settle needle quietly on the coordinate without any spin sound
     spinTimeoutRef.current = setTimeout(() => {
       setDisplayLetter(target.letter);
       setDisplayNumber(target.number.toString());
@@ -84,10 +72,17 @@ export default function CoordinateDial() {
     }, 2600);
   };
 
-  const copyCoordinate = () => {
-    navigator.clipboard?.writeText(currentCoord.code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
+  // Quick Fire Button: Plays cannon fire immediately, followed by the Wilhelm scream
+  const handleQuickFire = () => {
+    if (isFiring) return;
+    setIsFiring(true);
+
+    sounds.playCannon();
+
+    setTimeout(() => {
+      sounds.playWilhelm();
+      setIsFiring(false);
+    }, 1100);
   };
 
   return (
@@ -115,8 +110,8 @@ export default function CoordinateDial() {
           </div>
         </div>
 
-        {/* Dual Nautical Compasses with Spinning Needles */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12 w-full my-2">
+        {/* Dual Nautical Compasses with Quick Fire Button in between */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8 w-full my-2">
           {/* Latitude Compass (Letters) */}
           <CompassDial
             items={letters}
@@ -126,6 +121,21 @@ export default function CoordinateDial() {
             currentValue={isSpinning ? '...' : displayLetter}
             selectedIndex={selectedLetterIndex}
           />
+
+          {/* Quick Cannon FIRE Button in between towards bottom */}
+          <div className="flex flex-col items-center justify-center sm:self-end sm:mb-2 z-20">
+            <button
+              onClick={handleQuickFire}
+              disabled={isFiring}
+              className={`pirate-btn-crimson flex items-center gap-2 px-5 py-2 rounded-xl font-pirata text-xl uppercase tracking-wider font-bold shadow-xl border-2 border-red-500 hover:scale-105 active:scale-95 transition-all cursor-pointer ${
+                isFiring ? 'animate-pulse ring-4 ring-red-500/50' : ''
+              }`}
+              title="Fire Cannons!"
+            >
+              <Flame className="w-5 h-5 text-amber-300" />
+              <span>{isFiring ? 'FIRING!' : 'FIRE'}</span>
+            </button>
+          </div>
 
           {/* Longitude Compass (Numbers) */}
           <CompassDial
@@ -138,31 +148,14 @@ export default function CoordinateDial() {
           />
         </div>
 
-        {/* Current Result Plaque */}
-        <div className="w-full bg-[#fdf6e3] border-2 border-[#8b4513] rounded-2xl p-4 shadow-inner flex items-center justify-between px-6">
-          <div className="text-left">
-            <span className="text-[11px] font-bold uppercase tracking-widest text-[#8b4513]/80 block">
-              Compass Reading
-            </span>
-            <span className="font-pirata text-3xl sm:text-4xl text-[#3e2723] font-bold tracking-wider">
-              {currentCoord.code}
-            </span>
-          </div>
-
-          <button
-            onClick={copyCoordinate}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-[#8b4513]/40 bg-[#d4b88c]/30 hover:bg-[#d4b88c]/60 text-xs font-semibold text-[#4e342e] transition cursor-pointer"
-            title="Copy coordinate"
-          >
-            {copied ? (
-              <>
-                <Check className="w-4 h-4 text-emerald-700" />
-                <span>Copied!</span>
-              </>
-            ) : (
-              <span>Copy</span>
-            )}
-          </button>
+        {/* Current Result Plaque - Clean without copy button */}
+        <div className="w-full bg-[#fdf6e3] border-2 border-[#8b4513] rounded-2xl p-4 shadow-inner flex flex-col items-center justify-center text-center">
+          <span className="text-[11px] font-bold uppercase tracking-widest text-[#8b4513]/80 block">
+            Compass Reading
+          </span>
+          <span className="font-pirata text-4xl sm:text-5xl text-[#3e2723] font-bold tracking-wider mt-0.5">
+            {currentCoord.code}
+          </span>
         </div>
 
         {/* Action Spin Button */}
