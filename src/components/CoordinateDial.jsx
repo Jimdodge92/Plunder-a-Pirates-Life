@@ -5,7 +5,7 @@ import { sounds } from '../utils/soundEffects';
 import CompassDial from './CompassDial';
 import confetti from 'canvas-confetti';
 import { getRandomPirateTaunt } from '../utils/pirateTaunts';
-import { RotateCw, History, Settings2, Compass, Flame, Skull } from 'lucide-react';
+import { RotateCw, History, Settings2, Compass, Flame, Skull, Volume2, VolumeX } from 'lucide-react';
 
 export default function CoordinateDial() {
   const {
@@ -14,6 +14,8 @@ export default function CoordinateDial() {
     setSettingsOpen,
     coordinateHistory,
     addCoordinateToHistory,
+    soundMuted,
+    toggleSound,
   } = useGame();
 
   const { totalLetters, totalNumbers, letters, displayRange, summary } = calculateGridBounds(
@@ -160,8 +162,8 @@ export default function CoordinateDial() {
             selectedIndex={selectedLetterIndex}
           />
 
-          {/* Quick Cannon FIRE Button in between */}
-          <div className="flex flex-col items-center justify-center shrink-0 z-20">
+          {/* Quick Cannon FIRE Button & Audio Mute Toggle in between */}
+          <div className="flex flex-col items-center justify-center shrink-0 z-20 gap-1 sm:gap-1.5">
             <button
               onClick={handleQuickFire}
               disabled={isFiring}
@@ -172,6 +174,29 @@ export default function CoordinateDial() {
             >
               <Flame className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-amber-300" />
               <span>{isFiring ? 'FIRING!' : 'FIRE'}</span>
+            </button>
+
+            {/* Audio Mute/Unmute Toggle underneath FIRE button */}
+            <button
+              onClick={toggleSound}
+              className={`flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full border text-[10px] sm:text-xs font-semibold shadow-sm transition-all cursor-pointer ${
+                soundMuted
+                  ? 'bg-red-950/85 border-red-700 text-red-300 hover:bg-red-900'
+                  : 'bg-[#3e2723]/85 border-[#b8860b]/70 text-amber-300 hover:bg-[#4e342e]'
+              }`}
+              title={soundMuted ? 'Sound Muted (Click to Unmute)' : 'Sound On (Click to Mute)'}
+            >
+              {soundMuted ? (
+                <>
+                  <VolumeX className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-red-400" />
+                  <span className="hidden min-[400px]:inline">Muted</span>
+                </>
+              ) : (
+                <>
+                  <Volume2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" />
+                  <span className="hidden min-[400px]:inline">Sound</span>
+                </>
+              )}
             </button>
           </div>
 

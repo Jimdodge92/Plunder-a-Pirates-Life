@@ -3,12 +3,12 @@ import { useGame } from '../context/GameContext';
 import { sounds } from '../utils/soundEffects';
 import confetti from 'canvas-confetti';
 import { getRandomPirateTaunt } from '../utils/pirateTaunts';
-import { Swords, Shield, Flame, Skull, Trophy, History } from 'lucide-react';
+import { Swords, Shield, Flame, Skull, Trophy, History, Volume2, VolumeX } from 'lucide-react';
 
 const DICE_EMOJIS = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
 
 export default function SkirmishRoller() {
-  const { battleHistory, addBattleRecord } = useGame();
+  const { battleHistory, addBattleRecord, soundMuted, toggleSound } = useGame();
 
   const [attackBonus, setAttackBonus] = useState(0);
   const [defenseBonus, setDefenseBonus] = useState(0);
@@ -248,6 +248,31 @@ export default function SkirmishRoller() {
           <Flame className="w-6 h-6 text-amber-300" />
           <span>{isRolling ? 'Firing Broadsides...' : 'Fire Cannons! (Attack)'}</span>
         </button>
+
+        {/* Audio Mute/Unmute toggle directly underneath Fire Button */}
+        <div className="flex items-center justify-center -mt-2">
+          <button
+            onClick={toggleSound}
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-semibold shadow-sm transition-all cursor-pointer ${
+              soundMuted
+                ? 'bg-red-950/85 border-red-700 text-red-300 hover:bg-red-900'
+                : 'bg-[#3e2723]/85 border-[#b8860b]/70 text-amber-300 hover:bg-[#4e342e]'
+            }`}
+            title={soundMuted ? 'Audio Muted (Click to Unmute)' : 'Audio On (Click to Mute)'}
+          >
+            {soundMuted ? (
+              <>
+                <VolumeX className="w-3.5 h-3.5 text-red-400" />
+                <span>Audio Muted (Click to Unmute)</span>
+              </>
+            ) : (
+              <>
+                <Volume2 className="w-3.5 h-3.5 text-amber-400" />
+                <span>Audio On (Click to Mute)</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Skirmish History Log */}
