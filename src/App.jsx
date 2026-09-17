@@ -51,7 +51,7 @@ export default function App() {
       <div className="relative min-h-screen flex flex-col overflow-x-hidden text-amber-950">
         {/* Deep Ocean & Sea Territory Map Backdrop */}
         <div
-          className="fixed inset-0 bg-cover bg-center opacity-25 pointer-events-none mix-blend-overlay"
+          className="fixed inset-0 bg-cover bg-center opacity-40 pointer-events-none mix-blend-overlay"
           style={{ backgroundImage: `url(${seaMapBg})` }}
         />
 
