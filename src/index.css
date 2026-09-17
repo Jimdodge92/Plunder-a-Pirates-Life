@@ -32,9 +32,12 @@
 /* Aged Parchment Box Effect */
 .parchment-container {
   background-color: #d4b88c;
-  background-image: radial-gradient(rgba(212, 184, 140, 0.95), rgba(184, 150, 100, 0.95));
+  background-image: url('./assets/weathered_parchment.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   border: 5px solid #6d4c41;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(78, 52, 46, 0.25);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), inset 0 0 35px rgba(78, 52, 46, 0.35);
   position: relative;
 }
 
