@@ -1,9 +1,23 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import { pickRandomCoordinate, calculateGridBounds } from '../utils/gridCoordinates';
 import { sounds } from '../utils/soundEffects';
 import CompassDial from './CompassDial';
-import { RotateCw, History, Settings2, Compass, Flame } from 'lucide-react';
+import confetti from 'canvas-confetti';
+import { RotateCw, History, Settings2, Compass, Flame, Skull } from 'lucide-react';
+
+const PIRATE_TAUNTS = [
+  "It's Davy Jones for you, scallywag!",
+  "Broadside through the hull! Dance with the fishes!",
+  "Ye'll be sleepin' with the barnacles tonight!",
+  "Blow me down! Sent 'em straight to the briny deep!",
+  "No quarter for landlubbers! Down she goes!",
+  "Shiver me timbers, that shot split their keel!",
+  "Feed 'em to the sharks! Victory is ours!",
+  "Strike your colors or sink to the abyss, matey!",
+  "Cannonballs and sulfur! Splintered to toothpicks!",
+  "A fine broadside! Ye couldn't dodge a kraken at anchor!"
+];
 
 export default function CoordinateDial() {
   const {
@@ -30,10 +44,19 @@ export default function CoordinateDial() {
 
   const [isSpinning, setIsSpinning] = useState(false);
   const [isFiring, setIsFiring] = useState(false);
+  const [activeTaunt, setActiveTaunt] = useState(null);
   const [letterNeedleAngle, setLetterNeedleAngle] = useState(0);
   const [numberNeedleAngle, setNumberNeedleAngle] = useState(0);
 
   const spinTimeoutRef = useRef(null);
+  const tauntTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (spinTimeoutRef.current) clearTimeout(spinTimeoutRef.current);
+      if (tauntTimeoutRef.current) clearTimeout(tauntTimeoutRef.current);
+    };
+  }, []);
 
   const calculateTargetNeedleAngle = (prevAngle, targetIndex, totalItems) => {
     const anglePerItem = 360 / totalItems;
@@ -72,12 +95,31 @@ export default function CoordinateDial() {
     }, 2600);
   };
 
-  // Quick Fire Button: Plays cannon fire immediately, followed by the Wilhelm scream
+  // Quick Fire Button: Plays cannon fire, triggers confetti fanfare, picks a pirate taunt (lasts ~4.5s), and screams!
   const handleQuickFire = () => {
     if (isFiring) return;
     setIsFiring(true);
 
     sounds.playCannon();
+
+    // Confetti fanfare matching Skirmish victory
+    confetti({
+      particleCount: 60,
+      spread: 70,
+      origin: { y: 0.65 },
+      colors: ['#ffd700', '#ff4500', '#b8860b', '#d4af37']
+    });
+
+    // Pick a random pirate taunt and display for 4.5 seconds (under 5s max)
+    const randomTaunt = PIRATE_TAUNTS[Math.floor(Math.random() * PIRATE_TAUNTS.length)];
+    setActiveTaunt(randomTaunt);
+
+    if (tauntTimeoutRef.current) {
+      clearTimeout(tauntTimeoutRef.current);
+    }
+    tauntTimeoutRef.current = setTimeout(() => {
+      setActiveTaunt(null);
+    }, 4500);
 
     setTimeout(() => {
       sounds.playWilhelm();
@@ -147,6 +189,21 @@ export default function CoordinateDial() {
             selectedIndex={selectedNumberIndex}
           />
         </div>
+
+        {/* Pirate Taunt Banner - stays for up to 4.5 seconds on cannon fire */}
+        {activeTaunt && (
+          <div className="w-full bg-gradient-to-r from-[#2c1209] via-[#4d160f] to-[#2c1209] border-2 border-amber-400 rounded-2xl p-3.5 sm:p-4 text-center shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-widest mb-1">
+              <Flame className="w-4 h-4 text-red-500 animate-pulse" />
+              <span>Broadside Fired!</span>
+              <Skull className="w-4 h-4 text-amber-300" />
+              <Flame className="w-4 h-4 text-red-500 animate-pulse" />
+            </div>
+            <p className="font-pirata text-2xl sm:text-3xl text-amber-200 font-bold tracking-wide drop-shadow-md">
+              “{activeTaunt}”
+            </p>
+          </div>
+        )}
 
         {/* Current Result Plaque - Clean without copy button */}
         <div className="w-full bg-[#fdf6e3] border-2 border-[#8b4513] rounded-2xl p-4 shadow-inner flex flex-col items-center justify-center text-center">
