@@ -35,16 +35,13 @@ export default function TitlePage() {
         </div>
 
         {/* Title & Subtitle */}
-        <div className="space-y-2">
+        <div className="space-y-1">
           <h1 className="font-pirata text-4xl sm:text-6xl text-[#3e2723] tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)] leading-tight">
             Welcome to Plunder a Pirate's Life
           </h1>
-          <p className="text-sm sm:text-base font-bold uppercase tracking-widest text-[#8b4513] mt-2">
+          <p className="font-pirata text-2xl sm:text-3xl text-[#8b4513] tracking-wide mt-1 drop-shadow-sm">
             Created by Jim Dodge
           </p>
-          <div className="text-xs sm:text-sm text-[#5d4037] italic mt-3 max-w-md mx-auto">
-            Your official digital companion for grid navigation, booty draws, battle skirmishes, and fleet scorekeeping.
-          </div>
         </div>
 
         {/* Action Button - The Only Button on the Title Screen */}
