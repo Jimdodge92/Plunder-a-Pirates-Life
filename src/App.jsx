@@ -58,7 +58,7 @@ export default function App() {
           <AppBody />
 
           <footer className="w-full text-center text-xs text-amber-300/50 py-4 font-mono mt-auto">
-            Plunder, a Pirates Life &bull; Created by Jim Dodge
+            Plunder: A Pirate's Life &bull; Created by Jim Dodge
           </footer>
         </div>
       </div>

@@ -37,7 +37,7 @@ export default function TitlePage() {
         {/* Title & Subtitle */}
         <div className="space-y-1">
           <h1 className="font-pirata text-4xl sm:text-6xl text-[#3e2723] tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)] leading-tight">
-            Welcome to Plunder a Pirate's Life
+            Welcome to Plunder: A Pirate's Life
           </h1>
           <p className="font-pirata text-2xl sm:text-3xl text-[#8b4513] tracking-wide mt-1 drop-shadow-sm">
             Created by Jim Dodge
