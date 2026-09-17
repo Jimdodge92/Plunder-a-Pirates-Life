@@ -5,6 +5,7 @@ export default function CompassDial({
   items = [],
   needleAngle = 0,
   isSpinning = false,
+  spinDuration = 5,
   label = '',
   currentValue = '',
   selectedIndex = 0,
@@ -154,7 +155,7 @@ export default function CompassDial({
             style={{
               transform: `rotate(${needleAngle}deg)`,
               transformOrigin: '180px 180px',
-              transition: isSpinning ? 'transform 2.6s cubic-bezier(0.12, 0.95, 0.22, 1)' : 'none',
+              transition: isSpinning ? `transform ${spinDuration}s cubic-bezier(0.12, 0.8, 0.18, 1)` : 'none',
             }}
           >
             {/* NORTH ARROW (Pointing UP at 12 o'clock / 0 deg) */}

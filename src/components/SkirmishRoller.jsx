@@ -1,7 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import { sounds } from '../utils/soundEffects';
 import confetti from 'canvas-confetti';
+import { getRandomPirateTaunt } from '../utils/pirateTaunts';
 import { Swords, Shield, Flame, Skull, Trophy, History } from 'lucide-react';
 
 const DICE_EMOJIS = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
@@ -19,8 +20,17 @@ export default function SkirmishRoller() {
   const [finalAttackTotal, setFinalAttackTotal] = useState(null);
   const [finalDefenseTotal, setFinalDefenseTotal] = useState(null);
   const [battleResult, setBattleResult] = useState(null);
+  const [activeTaunt, setActiveTaunt] = useState(null);
 
   const rollIntervalRef = useRef(null);
+  const tauntTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (rollIntervalRef.current) clearInterval(rollIntervalRef.current);
+      if (tauntTimeoutRef.current) clearTimeout(tauntTimeoutRef.current);
+    };
+  }, []);
 
   const handleAttack = () => {
     if (isRolling) return;
@@ -30,6 +40,16 @@ export default function SkirmishRoller() {
     // Blast the cannons!
     sounds.playCannon();
     sounds.playDice();
+
+    // Trigger pirate taunt for 10 seconds
+    const randomTaunt = getRandomPirateTaunt();
+    setActiveTaunt(randomTaunt);
+    if (tauntTimeoutRef.current) {
+      clearTimeout(tauntTimeoutRef.current);
+    }
+    tauntTimeoutRef.current = setTimeout(() => {
+      setActiveTaunt(null);
+    }, 10000);
 
     // Animate dice faces
     let ticks = 0;
@@ -200,6 +220,21 @@ export default function SkirmishRoller() {
               {battleResult.attackerWins
                 ? '“Ye struck true, matey! Send them scurvy dogs to Davy Jones’ Locker!”'
                 : '“Blast! Their hull withstood the broadside. Retreat to the fog!”'}
+            </p>
+          </div>
+        )}
+
+        {/* Pirate Taunt Banner - 10 Seconds */}
+        {activeTaunt && (
+          <div className="w-full bg-gradient-to-r from-[#2c1209] via-[#4d160f] to-[#2c1209] border-2 border-amber-400 rounded-2xl p-3.5 sm:p-4 text-center shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-widest mb-1">
+              <Flame className="w-4 h-4 text-red-500 animate-pulse" />
+              <span>Skirmish Broadside!</span>
+              <Skull className="w-4 h-4 text-amber-300" />
+              <Flame className="w-4 h-4 text-red-500 animate-pulse" />
+            </div>
+            <p className="font-pirata text-2xl sm:text-3xl text-amber-200 font-bold tracking-wide drop-shadow-md">
+              “{activeTaunt}”
             </p>
           </div>
         )}

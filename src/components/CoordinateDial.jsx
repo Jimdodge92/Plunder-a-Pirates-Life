@@ -4,20 +4,8 @@ import { pickRandomCoordinate, calculateGridBounds } from '../utils/gridCoordina
 import { sounds } from '../utils/soundEffects';
 import CompassDial from './CompassDial';
 import confetti from 'canvas-confetti';
+import { getRandomPirateTaunt } from '../utils/pirateTaunts';
 import { RotateCw, History, Settings2, Compass, Flame, Skull } from 'lucide-react';
-
-const PIRATE_TAUNTS = [
-  "It's Davy Jones for you, scallywag!",
-  "Broadside through the hull! Dance with the fishes!",
-  "Ye'll be sleepin' with the barnacles tonight!",
-  "Blow me down! Sent 'em straight to the briny deep!",
-  "No quarter for landlubbers! Down she goes!",
-  "Shiver me timbers, that shot split their keel!",
-  "Feed 'em to the sharks! Victory is ours!",
-  "Strike your colors or sink to the abyss, matey!",
-  "Cannonballs and sulfur! Splintered to toothpicks!",
-  "A fine broadside! Ye couldn't dodge a kraken at anchor!"
-];
 
 export default function CoordinateDial() {
   const {
@@ -43,6 +31,7 @@ export default function CoordinateDial() {
   const [displayNumber, setDisplayNumber] = useState('1');
 
   const [isSpinning, setIsSpinning] = useState(false);
+  const [spinDuration, setSpinDuration] = useState(5.0);
   const [isFiring, setIsFiring] = useState(false);
   const [activeTaunt, setActiveTaunt] = useState(null);
   const [letterNeedleAngle, setLetterNeedleAngle] = useState(0);
@@ -58,19 +47,25 @@ export default function CoordinateDial() {
     };
   }, []);
 
-  const calculateTargetNeedleAngle = (prevAngle, targetIndex, totalItems) => {
+  const calculateTargetNeedleAngle = (prevAngle, targetIndex, totalItems, extraSpins) => {
     const anglePerItem = 360 / totalItems;
     const targetAngle = targetIndex * anglePerItem;
     const currentMod = ((prevAngle % 360) + 360) % 360;
     let diff = (targetAngle - currentMod + 360) % 360;
     if (diff === 0) diff = 360;
-    const fullSpins = 5 * 360;
-    return prevAngle + fullSpins + diff;
+    return prevAngle + (extraSpins * 360) + diff;
   };
 
   const handleSpin = () => {
     if (isSpinning) return;
     setIsSpinning(true);
+
+    // Random duration between 4.0 and 7.0 seconds as requested
+    const randomDuration = parseFloat((4.0 + Math.random() * 3.0).toFixed(2));
+    setSpinDuration(randomDuration);
+
+    // Extra spins proportional to duration (e.g. 10 to 17 spins) for gradual deceleration
+    const extraSpins = Math.floor(randomDuration * 2.5);
 
     const target = pickRandomCoordinate(alphabetTiles, numberTiles);
     const targetLetterIndex = letters.indexOf(target.letter);
@@ -79,23 +74,23 @@ export default function CoordinateDial() {
     setSelectedLetterIndex(targetLetterIndex);
     setSelectedNumberIndex(targetNumberIndex);
 
-    const nextLetterAngle = calculateTargetNeedleAngle(letterNeedleAngle, targetLetterIndex, letters.length);
-    const nextNumberAngle = calculateTargetNeedleAngle(numberNeedleAngle, targetNumberIndex, numberItems.length);
+    const nextLetterAngle = calculateTargetNeedleAngle(letterNeedleAngle, targetLetterIndex, letters.length, extraSpins);
+    const nextNumberAngle = calculateTargetNeedleAngle(numberNeedleAngle, targetNumberIndex, numberItems.length, extraSpins);
 
     setLetterNeedleAngle(nextLetterAngle);
     setNumberNeedleAngle(nextNumberAngle);
 
-    // Settle needle quietly on the coordinate without any spin sound
+    // Settle needle quietly on the coordinate after full spin duration
     spinTimeoutRef.current = setTimeout(() => {
       setDisplayLetter(target.letter);
       setDisplayNumber(target.number.toString());
       setCurrentCoord(target);
       addCoordinateToHistory(target);
       setIsSpinning(false);
-    }, 2600);
+    }, randomDuration * 1000);
   };
 
-  // Quick Fire Button: Plays cannon fire, triggers confetti fanfare, picks a pirate taunt (lasts ~4.5s), and screams!
+  // Quick Fire Button: Plays cannon fire, triggers confetti fanfare, picks a pirate taunt (lasts 10s), and screams!
   const handleQuickFire = () => {
     if (isFiring) return;
     setIsFiring(true);
@@ -110,8 +105,8 @@ export default function CoordinateDial() {
       colors: ['#ffd700', '#ff4500', '#b8860b', '#d4af37']
     });
 
-    // Pick a random pirate taunt and display for 4.5 seconds (under 5s max)
-    const randomTaunt = PIRATE_TAUNTS[Math.floor(Math.random() * PIRATE_TAUNTS.length)];
+    // Pick a random pirate taunt and display for 10 seconds
+    const randomTaunt = getRandomPirateTaunt();
     setActiveTaunt(randomTaunt);
 
     if (tauntTimeoutRef.current) {
@@ -119,7 +114,7 @@ export default function CoordinateDial() {
     }
     tauntTimeoutRef.current = setTimeout(() => {
       setActiveTaunt(null);
-    }, 4500);
+    }, 10000);
 
     setTimeout(() => {
       sounds.playWilhelm();
@@ -159,6 +154,7 @@ export default function CoordinateDial() {
             items={letters}
             needleAngle={letterNeedleAngle}
             isSpinning={isSpinning}
+            spinDuration={spinDuration}
             label={`Latitude Compass (${letters.length} Letters)`}
             currentValue={isSpinning ? '...' : displayLetter}
             selectedIndex={selectedLetterIndex}
@@ -184,13 +180,14 @@ export default function CoordinateDial() {
             items={numberItems}
             needleAngle={numberNeedleAngle}
             isSpinning={isSpinning}
+            spinDuration={spinDuration}
             label={`Longitude Compass (${numberItems.length} Numbers)`}
             currentValue={isSpinning ? '...' : displayNumber}
             selectedIndex={selectedNumberIndex}
           />
         </div>
 
-        {/* Pirate Taunt Banner - stays for up to 4.5 seconds on cannon fire */}
+        {/* Pirate Taunt Banner - stays for 10 seconds on cannon fire */}
         {activeTaunt && (
           <div className="w-full bg-gradient-to-r from-[#2c1209] via-[#4d160f] to-[#2c1209] border-2 border-amber-400 rounded-2xl p-3.5 sm:p-4 text-center shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-widest mb-1">
