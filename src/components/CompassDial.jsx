@@ -21,12 +21,12 @@ export default function CompassDial({
   return (
     <div className="flex flex-col items-center select-none">
       {/* Compass Header Label */}
-      <div className="text-xs font-bold uppercase tracking-wider text-[#5d4037] mb-2 font-pirata text-base sm:text-lg">
+      <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#5d4037] mb-1 sm:mb-2 font-pirata sm:text-lg text-center truncate max-w-[130px] min-[400px]:max-w-[150px] sm:max-w-none">
         {label}
       </div>
 
       {/* Compass Housing Outer Bezel */}
-      <div className="relative w-64 h-64 sm:w-72 sm:h-72 rounded-full p-2 bg-[#20110a] border-4 border-[#b8860b] shadow-[0_12px_28px_rgba(0,0,0,0.65),inset_0_0_15px_rgba(0,0,0,0.8)] flex items-center justify-center">
+      <div className="relative w-32 h-32 min-[380px]:w-36 min-[380px]:h-36 min-[430px]:w-40 min-[430px]:h-40 sm:w-64 sm:h-64 md:w-72 md:h-72 rounded-full p-1.5 sm:p-2 bg-[#20110a] border-3 sm:border-4 border-[#b8860b] shadow-[0_8px_20px_rgba(0,0,0,0.65),inset_0_0_15px_rgba(0,0,0,0.8)] flex items-center justify-center shrink-0">
         
         {/* Antique Compass Rose Background Texture */}
         <img
@@ -198,9 +198,9 @@ export default function CompassDial({
       </div>
 
       {/* Under-compass current reading badge */}
-      <div className="mt-3 text-center">
-        <span className="text-xs font-mono font-bold text-[#8b4513] bg-[#fdf6e3] px-3 py-1 rounded-full border border-[#8b4513]/50 shadow-sm">
-          Pointing to: <strong className="font-pirata text-base text-[#3e2723] ml-1">{currentValue}</strong>
+      <div className="mt-1.5 sm:mt-3 text-center">
+        <span className="text-[10px] sm:text-xs font-mono font-bold text-[#8b4513] bg-[#fdf6e3] px-2 py-0.5 sm:px-3 sm:py-1 rounded-full border border-[#8b4513]/50 shadow-sm whitespace-nowrap">
+          Pointing: <strong className="font-pirata text-sm sm:text-base text-[#3e2723] ml-0.5 sm:ml-1">{currentValue}</strong>
         </span>
       </div>
     </div>

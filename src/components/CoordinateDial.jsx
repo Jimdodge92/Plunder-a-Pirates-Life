@@ -125,16 +125,16 @@ export default function CoordinateDial() {
   return (
     <div className="w-full flex flex-col items-center">
       {/* Parchment Container */}
-      <div className="w-full max-w-3xl parchment-container rounded-3xl p-5 sm:p-7 flex flex-col items-center gap-5 shadow-2xl">
+      <div className="w-full max-w-3xl parchment-container rounded-3xl p-3.5 sm:p-7 flex flex-col items-center gap-3 sm:gap-5 shadow-2xl">
         
         {/* Title and Board Size Header */}
         <div className="text-center w-full">
-          <h2 className="font-pirata text-3xl sm:text-4xl text-[#3e2723] tracking-wider drop-shadow-sm flex items-center justify-center gap-2">
-            <Compass className="w-8 h-8 text-[#8b4513]" />
+          <h2 className="font-pirata text-2xl sm:text-4xl text-[#3e2723] tracking-wider drop-shadow-sm flex items-center justify-center gap-2">
+            <Compass className="w-6 h-6 sm:w-8 sm:h-8 text-[#8b4513]" />
             <span>Sea Grid Compasses</span>
           </h2>
-          <div className="flex items-center justify-center gap-2 mt-1">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#6d4c41]">
+          <div className="flex items-center justify-center gap-2 mt-0.5 sm:mt-1">
+            <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[#6d4c41]">
               Sea Grid: {displayRange} ({summary})
             </span>
             <button
@@ -147,30 +147,30 @@ export default function CoordinateDial() {
           </div>
         </div>
 
-        {/* Dual Nautical Compasses with Quick Fire Button in between */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8 w-full my-2">
+        {/* Dual Nautical Compasses with Quick Fire Button in between - Side-by-side on mobile */}
+        <div className="flex flex-row items-center justify-center gap-2 sm:gap-6 md:gap-8 w-full my-1 sm:my-3">
           {/* Latitude Compass (Letters) */}
           <CompassDial
             items={letters}
             needleAngle={letterNeedleAngle}
             isSpinning={isSpinning}
             spinDuration={spinDuration}
-            label={`Latitude Compass (${letters.length} Letters)`}
+            label="Latitude (Letters)"
             currentValue={isSpinning ? '...' : displayLetter}
             selectedIndex={selectedLetterIndex}
           />
 
-          {/* Quick Cannon FIRE Button in between towards bottom */}
-          <div className="flex flex-col items-center justify-center sm:self-end sm:mb-2 z-20">
+          {/* Quick Cannon FIRE Button in between */}
+          <div className="flex flex-col items-center justify-center shrink-0 z-20">
             <button
               onClick={handleQuickFire}
               disabled={isFiring}
-              className={`pirate-btn-crimson flex items-center gap-2 px-5 py-2 rounded-xl font-pirata text-xl uppercase tracking-wider font-bold shadow-xl border-2 border-red-500 hover:scale-105 active:scale-95 transition-all cursor-pointer ${
+              className={`pirate-btn-crimson flex items-center gap-1 sm:gap-2 px-2.5 py-1.5 sm:px-5 sm:py-2 rounded-xl font-pirata text-sm sm:text-xl uppercase tracking-wider font-bold shadow-xl border-2 border-red-500 hover:scale-105 active:scale-95 transition-all cursor-pointer ${
                 isFiring ? 'animate-pulse ring-4 ring-red-500/50' : ''
               }`}
               title="Fire Cannons!"
             >
-              <Flame className="w-5 h-5 text-amber-300" />
+              <Flame className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-amber-300" />
               <span>{isFiring ? 'FIRING!' : 'FIRE'}</span>
             </button>
           </div>
@@ -181,7 +181,7 @@ export default function CoordinateDial() {
             needleAngle={numberNeedleAngle}
             isSpinning={isSpinning}
             spinDuration={spinDuration}
-            label={`Longitude Compass (${numberItems.length} Numbers)`}
+            label="Longitude (Numbers)"
             currentValue={isSpinning ? '...' : displayNumber}
             selectedIndex={selectedNumberIndex}
           />
@@ -189,25 +189,25 @@ export default function CoordinateDial() {
 
         {/* Pirate Taunt Banner - stays for 10 seconds on cannon fire */}
         {activeTaunt && (
-          <div className="w-full bg-gradient-to-r from-[#2c1209] via-[#4d160f] to-[#2c1209] border-2 border-amber-400 rounded-2xl p-3.5 sm:p-4 text-center shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+          <div className="w-full bg-gradient-to-r from-[#2c1209] via-[#4d160f] to-[#2c1209] border-2 border-amber-400 rounded-2xl p-3 sm:p-4 text-center shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-widest mb-1">
               <Flame className="w-4 h-4 text-red-500 animate-pulse" />
               <span>Broadside Fired!</span>
               <Skull className="w-4 h-4 text-amber-300" />
               <Flame className="w-4 h-4 text-red-500 animate-pulse" />
             </div>
-            <p className="font-pirata text-2xl sm:text-3xl text-amber-200 font-bold tracking-wide drop-shadow-md">
+            <p className="font-pirata text-xl sm:text-3xl text-amber-200 font-bold tracking-wide drop-shadow-md">
               “{activeTaunt}”
             </p>
           </div>
         )}
 
         {/* Current Result Plaque - Clean without copy button */}
-        <div className="w-full bg-[#fdf6e3] border-2 border-[#8b4513] rounded-2xl p-4 shadow-inner flex flex-col items-center justify-center text-center">
-          <span className="text-[11px] font-bold uppercase tracking-widest text-[#8b4513]/80 block">
+        <div className="w-full bg-[#fdf6e3] border-2 border-[#8b4513] rounded-2xl p-2.5 sm:p-4 shadow-inner flex flex-col items-center justify-center text-center">
+          <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-[#8b4513]/80 block">
             Compass Reading
           </span>
-          <span className="font-pirata text-4xl sm:text-5xl text-[#3e2723] font-bold tracking-wider mt-0.5">
+          <span className="font-pirata text-3xl sm:text-5xl text-[#3e2723] font-bold tracking-wider mt-0.5">
             {currentCoord.code}
           </span>
         </div>
@@ -216,9 +216,9 @@ export default function CoordinateDial() {
         <button
           onClick={handleSpin}
           disabled={isSpinning}
-          className="w-full pirate-btn-gold py-4 sm:py-5 rounded-2xl font-pirata text-2xl sm:text-3xl tracking-wider uppercase font-bold flex items-center justify-center gap-3 disabled:opacity-60 cursor-pointer shadow-xl border-2 border-amber-300 hover:scale-[1.02] active:scale-98 transition-all"
+          className="w-full pirate-btn-gold py-3 sm:py-4.5 rounded-2xl font-pirata text-xl sm:text-3xl tracking-wider uppercase font-bold flex items-center justify-center gap-2 sm:gap-3 disabled:opacity-60 cursor-pointer shadow-xl border-2 border-amber-300 hover:scale-[1.02] active:scale-98 transition-all"
         >
-          <RotateCw className={`w-7 h-7 text-amber-950 ${isSpinning ? 'animate-spin' : ''}`} />
+          <RotateCw className={`w-5 h-5 sm:w-7 sm:h-7 text-amber-950 ${isSpinning ? 'animate-spin' : ''}`} />
           <span>{isSpinning ? 'Casting Your Luck...' : 'Cast Your Luck to the Seas!'}</span>
         </button>
       </div>
