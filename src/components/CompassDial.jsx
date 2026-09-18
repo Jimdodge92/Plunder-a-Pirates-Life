@@ -197,11 +197,16 @@ export default function CompassDial({
         <div className="absolute top-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-amber-400 z-20 pointer-events-none" />
       </div>
 
-      {/* Under-compass current reading badge */}
-      <div className="mt-1.5 sm:mt-3 text-center">
-        <span className="text-[10px] sm:text-xs font-mono font-bold text-[#8b4513] bg-[#fdf6e3] px-2 py-0.5 sm:px-3 sm:py-1 rounded-full border border-[#8b4513]/50 shadow-sm whitespace-nowrap">
-          Pointing: <strong className="font-pirata text-sm sm:text-base text-[#3e2723] ml-0.5 sm:ml-1">{currentValue}</strong>
-        </span>
+      {/* Under-compass current reading badge - Centered with dedicated tile */}
+      <div className="mt-1.5 sm:mt-3 flex items-center justify-center">
+        <div className="inline-flex items-center justify-center gap-1.5 bg-[#fdf6e3] pl-2.5 pr-1.5 py-1 sm:pl-3 sm:pr-2 sm:py-1 rounded-full border-2 border-[#8b4513]/70 shadow-sm whitespace-nowrap leading-none">
+          <span className="text-[10px] sm:text-xs font-mono font-bold text-[#8b4513] uppercase tracking-wider">
+            Pointing:
+          </span>
+          <span className="inline-flex items-center justify-center min-w-[22px] h-[20px] sm:min-w-[26px] sm:h-[24px] px-1 bg-[#3e2723] text-amber-300 font-mono font-black text-xs sm:text-sm rounded border border-[#b8860b]/70 shadow-inner">
+            {currentValue}
+          </span>
+        </div>
       </div>
     </div>
   );
