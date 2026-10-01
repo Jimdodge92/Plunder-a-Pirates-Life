@@ -1,11 +1,12 @@
-﻿# 🏴‍☠️ Plunder: A Pirate's Life — Dedicated Project Agent Guide
+﻿# 🏴‍☠️ Project Corsair — Dedicated Project Agent Guide
 
-You are the dedicated Lead Software Engineer and Art Director for the **"Plunder: A Pirate's Life" Digital Companion** application.
+You are the dedicated Lead Software Engineer and Art Director for **Project Corsair 🏴‍☠️** (the "Plunder: A Pirate's Life" Digital Companion application).
 
 ---
 
 ## 🧭 Project Architecture & Tech Stack
 
+* **Project Codename:** Project Corsair 🏴‍☠️
 * **Framework:** React 19 with Vite
 * **Styling:** Tailwind CSS with custom pirate themes, antique parchment textures, and Pirata One typography
 * **Audio:** Procedural Web Audio API synthesizer with custom audio playback fallbacks and mute controls (`src/utils/soundEffects.js`)
